@@ -22,6 +22,7 @@ export function Game() {
 
 function Input({ guesses, setGuesses }) {
   const [word, setWord] = useState('');
+  const [success, setSuccess] = useState(false);
   return (
     <form
       className="guess-input-wrapper"
@@ -32,20 +33,30 @@ function Input({ guesses, setGuesses }) {
           newGuesses.push(word);
           setGuesses(newGuesses);
           setWord('');
+          if (word === answer) {
+            setSuccess(true);
+          }
         }
       }}
     >
-      <label htmlFor="guess-input">Enter guess:</label>
-      <input
-        id="guess-input"
-        type="text"
-        value={word}
-        maxLength={5}
-        minLength={5}
-        onChange={({ target }) => setWord(target.value.toUpperCase())}
-        disabled={guesses.length === NUM_OF_GUESSES_ALLOWED}
-        autoFocus
-      />
+      {!success && guesses.length < NUM_OF_GUESSES_ALLOWED && (
+        <>
+          <label htmlFor="guess-input">Enter guess:</label>
+          <input
+            id="guess-input"
+            type="text"
+            value={word}
+            maxLength={5}
+            minLength={5}
+            onChange={({ target }) => setWord(target.value.toUpperCase())}
+            autoFocus
+          />
+        </>
+      )}
+      {!success && guesses.length === NUM_OF_GUESSES_ALLOWED && (
+        <UnsuccessfulBanner />
+      )}
+      {success && <SuccessfulBanner numberOfGuesses={guesses.length} />}
     </form>
   );
 }
@@ -71,6 +82,27 @@ function GuessesList({ guesses }) {
           <span className="cell"></span>
         </p>
       ))}
+    </div>
+  );
+}
+
+function SuccessfulBanner({ numberOfGuesses }) {
+  return (
+    <div className="happy banner">
+      <p>
+        <strong>Congratulations!</strong> Got it in{' '}
+        <strong>{numberOfGuesses} guesses</strong>.
+      </p>
+    </div>
+  );
+}
+
+function UnsuccessfulBanner() {
+  return (
+    <div className="sad banner">
+      <p>
+        Sorry, the correct answer is <strong>{answer}</strong>.
+      </p>
     </div>
   );
 }
