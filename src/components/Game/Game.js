@@ -8,20 +8,27 @@ const answer = sample(WORDS);
 // To make debugging easier, we'll log the solution in the console.
 console.info({ answer });
 
-function Game() {
-  return Input();
+export function Game() {
+  const [guesses, setGuesses] = useState([]);
+  return (
+    <>
+      <GuessesList guesses={guesses} />
+      <Input guesses={guesses} setGuesses={setGuesses} />
+    </>
+  );
 }
 
-export default Game;
-function Input() {
+function Input({ guesses, setGuesses }) {
   const [word, setWord] = useState('');
   return (
     <form
       className="guess-input-wrapper"
       onSubmit={(event) => {
         event.preventDefault();
-        console.log(word);
-        setWord('');
+        if (word.length === 5) {
+          setGuesses([...guesses, word]);
+          setWord('');
+        }
       }}
     >
       <label htmlFor="guess-input">Enter guess:</label>
@@ -34,5 +41,17 @@ function Input() {
         onChange={({ target }) => setWord(target.value.toUpperCase())}
       />
     </form>
+  );
+}
+
+function GuessesList({ guesses }) {
+  return (
+    <div className="guess-results">
+      {guesses.map((guess, index) => (
+        <p key={index} className="guess">
+          {guess}
+        </p>
+      ))}
+    </div>
   );
 }
