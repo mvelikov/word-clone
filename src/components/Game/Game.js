@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { sample, range } from '../../utils';
 import { WORDS } from '../../data';
 import { NUM_OF_GUESSES_ALLOWED } from '../../constants';
+import { checkGuess } from '../../game-helpers';
 
 // Pick a random word on every pageload.
 const answer = sample(WORDS);
@@ -54,9 +55,9 @@ function GuessesList({ guesses }) {
     <div className="guess-results">
       {guesses.map((guess, index) => (
         <p key={index} className="guess">
-          {guess.split('').map((letter, index) => (
-            <span className="cell" key={index}>
-              {letter}
+          {checkGuess(guess, answer).map((segment, index) => (
+            <span className={`${segment.status} cell`} key={index}>
+              {segment.letter}
             </span>
           ))}
         </p>
